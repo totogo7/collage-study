@@ -1,0 +1,64 @@
+有两个线程，线程一的工作任务是计算0-100中偶数的累加和，线程二的任务是计算0-100中奇数的累加和，主线程main需要完成0-100的累加和的任务，main中不允许自行计算0-100的累加和，需要合理调用相应功能的线程完成它的任务。
+
+```
+public class SumCalculation {
+    
+    // 线程1：计算偶数的累加和
+    static class EvenSumThread extends Thread {
+        private int sum = 0;
+
+        @Override
+        public void run() {
+            // 计算0到100中所有偶数的累加和
+            for (int i = 0; i <= 100; i += 2) {
+                sum += i;
+            }
+        }
+
+        public int getSum() {
+            return sum;
+        }
+    }
+
+    // 线程2：计算奇数的累加和
+    static class OddSumThread extends Thread {
+        private int sum = 0;
+
+        @Override
+        public void run() {
+            // 计算0到100中所有奇数的累加和
+            for (int i = 1; i <= 100; i += 2) {
+                sum += i;
+            }
+        }
+
+        public int getSum() {
+            return sum;
+        }
+    }
+
+    public static void main(String[] args) throws InterruptedException {
+        // 主线程任务：计算0到100的累加和（包括偶数和奇数）
+        
+        // 创建线程
+        EvenSumThread evenThread = new EvenSumThread();
+        OddSumThread oddThread = new OddSumThread();
+
+        // 启动线程
+        evenThread.start();
+        oddThread.start();
+
+        // 等待线程计算完成
+        evenThread.join();
+        oddThread.join();
+
+        // 获取结果
+        int totalSum = evenThread.getSum() + oddThread.getSum();
+
+        // 输出结果
+        System.out.println("0到100之间所有偶数的累加和: " + evenThread.getSum());
+        System.out.println("0到100之间所有奇数的累加和: " + oddThread.getSum());
+        System.out.println("0到100的总累加和: " + totalSum);
+    }
+}
+```
